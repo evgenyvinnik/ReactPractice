@@ -1,49 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import "./styles.css";
 
-const SIZE = 36;
+const SIZE = 8;
 
-function Cell(props) {
-  const { index, cell, onClick } = props;
-  const {isMatched, value, isRevealed } = cell;
+function Cell({ index, cell, onClick, disabled }) {
+  const { isMatched, value, isRevealed } = cell;
 
-  const onClickButton = () => {
-    onClick(index);
-  }
-  return <button className="cell" onClick={onClickButton}>{
-    isRevealed || isMatched ? value.value : "?"
-  }</button>;
+  return (
+    <button
+      className="cell"
+      onClick={() => {
+        onClick(index);
+      }}
+      disabled={disabled || isMatched}
+    >
+      {isRevealed || isMatched ? value : "?"}
+    </button>
+  );
 }
 
 function Board() {
-  const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  };
 
   const initializeBoard = () => {
-    const arr = Array(SIZE);
-    for (let i = 0; i < SIZE / 2; i++) {
-      arr[2 * i] = i + 1;
-      arr[2 * i + 1] = i + 1;
-    }
-    const shuffledArr = shuffleArray(arr);
-    const newBoard = shuffledArr.map((value) => ({
+    const pairs = Array.from({ length: SIZE / 2 }, (_, i) => i + 1);
+     const shuffled = [...pairs, ...pairs].sort(() => Math.random() - 0.5);
+
+    return shuffled.map((value) => ({
       value: value,
       isRevealed: false,
       isMatched: false,
     }));
-    return newBoard;
   };
 
   const [board, setBoard] = useState(initializeBoard());
   const [firstSelection, setFirstSelection] = useState(null);
+  const [isChecking, setIsChecking] = useState(false);
 
   const resetBoard = () => {
     setBoard(initializeBoard());
+  };
+
+  const revealCell = (index) => {
+    const newBoard = board.slice();
+    newBoard[index].isRevealed = true;
+    setBoard(newBoard);
   };
 
   const onCellClick = (index) => {
@@ -52,7 +52,7 @@ function Board() {
       return; // Ignore clicks on revealed or matched cells
     }
 
-    if (firstSelection === null) {
+    if (firstSelection == null) {
       // First cell selected
       revealCell(index);
       setFirstSelection(index);
@@ -76,13 +76,23 @@ function Board() {
       }
       setFirstSelection(null);
     }
-  }
+  };
+
+  useEffect(() => {
+    // Check for game completion
+    if (board.every((cell) => cell.isMatched)) {
+      setTimeout(() => {
+        alert("Congratulations! You've matched all pairs!");
+        resetBoard();
+      }, 500);
+    }
+  }, [board]);
 
   return (
     <>
       <div className="board">
         {board.map((cell, index) => (
-          <Cell key={index} cell={cell} onClick={onCellClick} />
+          <Cell key={index} index={index} cell={cell} onClick={onCellClick} />
         ))}
       </div>
       <button className="reset-button" onClick={resetBoard}>
