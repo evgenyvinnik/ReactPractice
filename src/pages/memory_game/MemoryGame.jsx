@@ -7,19 +7,12 @@ function Cell({ index, cell, onClick, disabled }) {
   const { isMatched, value, isRevealed } = cell;
 
   return (
-    <button
-      className={`cell ${isRevealed ? "revealed" : ""} ${
-        isMatched ? "matched" : ""
-      }`}
-      onClick={() => {
-        onClick(index);
-      }}
+    <button 
+      className={`cell ${isRevealed ? 'revealed' : ''} ${isMatched ? 'matched' : ''}`}
+      onClick={() => onClick(index)}
       disabled={disabled || isMatched}
     >
-      <div className="cell-inner">
-        <div className="cell-front">?</div>
-        <div className="cell-back">{value}</div>
-      </div>
+      {isRevealed || isMatched ? value : "?"}
     </button>
   );
 }
