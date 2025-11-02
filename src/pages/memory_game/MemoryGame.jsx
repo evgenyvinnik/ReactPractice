@@ -8,22 +8,26 @@ function Cell({ index, cell, onClick, disabled }) {
 
   return (
     <button
-      className="cell"
+      className={`cell ${isRevealed ? "revealed" : ""} ${
+        isMatched ? "matched" : ""
+      }`}
       onClick={() => {
         onClick(index);
       }}
       disabled={disabled || isMatched}
     >
-      {isRevealed || isMatched ? value : "?"}
+      <div className="cell-inner">
+        <div className="cell-front">?</div>
+        <div className="cell-back">{value}</div>
+      </div>
     </button>
   );
 }
 
 function Board() {
-
   const initializeBoard = () => {
     const pairs = Array.from({ length: SIZE / 2 }, (_, i) => i + 1);
-     const shuffled = [...pairs, ...pairs].sort(() => Math.random() - 0.5);
+    const shuffled = [...pairs, ...pairs].sort(() => Math.random() - 0.5);
 
     return shuffled.map((value) => ({
       value: value,
@@ -36,54 +40,50 @@ function Board() {
   const [firstSelection, setFirstSelection] = useState(null);
   const [isChecking, setIsChecking] = useState(false);
 
-  const resetBoard = () => {
-    setBoard(initializeBoard());
-  };
-
-  const revealCell = (index) => {
-    const newBoard = board.slice();
-    newBoard[index].isRevealed = true;
-    setBoard(newBoard);
-  };
-
   const onCellClick = (index) => {
-    // Handle cell click logic here
-    if (board[index].isRevealed || board[index].isMatched) {
-      return; // Ignore clicks on revealed or matched cells
+    const cell = board[index];
+
+    if (cell.isRevealed || cell.isMatched || isChecking) {
+      return;
     }
 
-    if (firstSelection == null) {
-      // First cell selected
-      revealCell(index);
+    const newBoard = [...board];
+    newBoard[index].isRevealed = true;
+    setBoard(newBoard);
+
+    if (firstSelection === null) {
       setFirstSelection(index);
     } else {
-      // Second cell selected
-      revealCell(index);
-      if (board[firstSelection].value === board[index].value) {
-        // It's a match
-        const newBoard = board.slice();
+      setIsChecking(true);
+
+      if (newBoard[firstSelection].value === newBoard[index].value) {
         newBoard[firstSelection].isMatched = true;
         newBoard[index].isMatched = true;
         setBoard(newBoard);
+        setFirstSelection(null);
+        setIsChecking(false);
       } else {
-        // Not a match, hide cells after a delay
         setTimeout(() => {
-          const newBoard = board.slice();
-          newBoard[firstSelection].isRevealed = false;
-          newBoard[index].isRevealed = false;
-          setBoard(newBoard);
+          setBoard((prev) =>
+            prev.map((cell, i) =>
+              i === firstSelection || i === index
+                ? { ...cell, isRevealed: false }
+                : cell
+            )
+          );
+          setFirstSelection(null);
+          setIsChecking(false);
         }, 1000);
       }
-      setFirstSelection(null);
     }
   };
 
   useEffect(() => {
-    // Check for game completion
     if (board.every((cell) => cell.isMatched)) {
       setTimeout(() => {
         alert("Congratulations! You've matched all pairs!");
-        resetBoard();
+        setBoard(initializeBoard());
+        setFirstSelection(null);
       }, 500);
     }
   }, [board]);
@@ -92,10 +92,23 @@ function Board() {
     <>
       <div className="board">
         {board.map((cell, index) => (
-          <Cell key={index} index={index} cell={cell} onClick={onCellClick} />
+          <Cell
+            key={index}
+            index={index}
+            cell={cell}
+            onClick={onCellClick}
+            disabled={isChecking}
+          />
         ))}
       </div>
-      <button className="reset-button" onClick={resetBoard}>
+      <button
+        className="reset-button"
+        onClick={() => {
+          setBoard(initializeBoard());
+          setFirstSelection(null);
+          setIsChecking(false);
+        }}
+      >
         Reset Game
       </button>
     </>
