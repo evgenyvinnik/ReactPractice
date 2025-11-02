@@ -1,7 +1,7 @@
 import React, { useState, useEffect, use } from "react";
 import "./styles.css";
 
-const SIZE = 8;
+const SIZE = 36;
 
 function Cell({ index, cell, onClick, disabled }) {
   const { isMatched, value, isRevealed } = cell;
