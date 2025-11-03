@@ -8,6 +8,9 @@ export default function Home() {
         <li>
           <Link to="/memory_game">Memory Game</Link>
         </li>
+        <li>
+          <Link to="/undoable_counter">Undoable Counter</Link>
+        </li>
       </ul>
     </main>
   )
