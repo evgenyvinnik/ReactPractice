@@ -24,6 +24,9 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          # Set VITE_BASE to the repo path so Vite will emit correct asset URLs for GitHub Pages
+          VITE_BASE: '/ReactPractice/'
         run: npm run build
 
       - name: Deploy to GitHub Pages

@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// IMPORTANT: Set the base path to match your GitHub repo name for correct asset loading on GitHub Pages.
-// Replace 'ReactPractice' with your actual repo name if different.
+// IMPORTANT: Use VITE_BASE environment variable at build time so CI can set the correct base path
+// for GitHub Pages. If not provided, default to '/ReactPractice/'.
+const basePath = process.env.VITE_BASE || '/ReactPractice/'
+
 export default defineConfig({
-  base: '/ReactPractice/',
-  plugins: [react()]
+  base: basePath,
+  plugins: [react()],
 })
