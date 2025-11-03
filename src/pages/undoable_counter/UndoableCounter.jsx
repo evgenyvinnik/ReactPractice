@@ -5,7 +5,7 @@ const STEPS = [1, 10, 100];
 
 export default function UndoableCounter() {
   const [counter, setCounter] = useState(0);
-  
+
   const [redoStack, setRedoStack] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
   const [history, setHistory] = useState([]);
@@ -101,9 +101,9 @@ export default function UndoableCounter() {
       <div className="history">
         {history.map(({ delta, history }, index) => {
           return (
-            <div className="delta" key={`history-${index}`}>
-              <div>{delta}</div>
-              <div>{history}</div>
+            <div className="entry" key={`history-${index}`}>
+              <div className="delta">{delta}</div>
+              <div className="history-entry">{history}</div>
             </div>
           );
         })}
