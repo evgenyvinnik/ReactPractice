@@ -18,32 +18,31 @@ export default function Timer() {
   const calculateTotal = (hour, minute, second) =>
     Number(hour) * 3600 + Number(minute) * 60 + Number(second);
 
+  const clearTimer = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
   useEffect(() => {
     setTotal(calculateTotal(hour, minute, second));
   }, [hour, minute, second]);
 
   useEffect(() => {
     if (running && total === 0) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+      clearTimer();
       setRunning(false);
       alert("Timer is done!");
     }
   }, [total, running]);
 
-  // Cleanup on unmount
   useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
+    return () => clearTimer();
   }, []);
 
   const onClickStart = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
+    clearTimer();
 
     intervalRef.current = setInterval(() => {
       setTotal((prev) => prev - 1);
@@ -53,18 +52,12 @@ export default function Timer() {
   };
 
   const onClickPause = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
+    clearTimer();
   };
 
   const onClickReset = () => {
     setRunning(false);
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
+    clearTimer();
     setTotal(calculateTotal(hour, minute, second));
   };
 
