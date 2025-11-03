@@ -1,0 +1,39 @@
+.container {
+  max-width: 900px;
+  margin: 48px auto;
+  padding: 16px;
+  background: var(--card);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: baseline;
+  gap: 24px;
+}
+
+.header {
+  margin: 16px 0;
+}
+
+.inputs {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+
+.timeInput {
+  width: 100px;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 16px
+}

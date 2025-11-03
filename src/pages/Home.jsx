@@ -14,6 +14,9 @@ export default function Home() {
         <li>
           <Link to="/faq">Frequenty Asked Questions</Link>
         </li>
+        <li>
+          <Link to="/timer">Countdown timer</Link>
+        </li>
       </ul>
     </main>
   );
