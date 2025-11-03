@@ -37,3 +37,8 @@
   flex-direction: row;
   gap: 16px
 }
+
+.running {
+  font-size: x-large;
+  font-weight: bold;
+}
