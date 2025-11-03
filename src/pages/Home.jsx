@@ -17,6 +17,9 @@ export default function Home() {
         <li>
           <Link to="/timer">Countdown timer</Link>
         </li>
+        <li>
+          <Link to="/connect_four">Connect Four</Link>
+        </li>
       </ul>
     </main>
   );

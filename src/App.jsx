@@ -5,6 +5,7 @@ import MemoryGame from "./pages/memory_game/MemoryGame";
 import UndoableCounter from "./pages/undoable_counter/UndoableCounter";
 import Faq from "./pages/faq/Faq";
 import Timer from "./pages/timer/Timer";
+import ConnectFour from "./pages/connect_four/ConnectFour";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       <Route path="/undoable_counter" element={<UndoableCounter />} />
       <Route path="/faq" element={<Faq />} />
       <Route path="/timer" element={<Timer />} />
+      <Route path="/connect_four" element={<ConnectFour />} />
     </Routes>
   );
 }
