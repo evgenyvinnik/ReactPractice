@@ -3,8 +3,6 @@ import "./styles.css";
 
 function Question({ value }) {
   const { question, answer } = value;
-  console.log("question", question);
-  console.log("answer", answer);
   const [expanded, setExpanded] = useState(false);
 
   const onClick = () => {
