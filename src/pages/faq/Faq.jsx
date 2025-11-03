@@ -5,17 +5,17 @@ function Question({ value }) {
   const { question, answer } = value;
   const [expanded, setExpanded] = useState(false);
 
-  const onClick = () => {
+  const toggle = () => {
     setExpanded(!expanded);
   };
 
   return (
-    <div className="entry" onClick={onClick}>
+    <div className="entry" onClick={toggle}>
       <div className="question">
-        <div className="question-marker">{expanded ? "▼" : "▶"}</div>
-        <div className="question-text">{question}</div>
+        <span className="question-marker">{expanded ? "▼" : "▶"}</span>
+        <span className="question-text">{question}</span>
       </div>
-      {expanded ? <div className="answer">{answer}</div> : null}
+      {expanded && <div className="answer">{answer}</div>}
     </div>
   );
 }
@@ -23,8 +23,8 @@ function Question({ value }) {
 function List({ data }) {
   return (
     <div className="list">
-      {data.map((value, index) => (
-        <Question value={value} key={index} />
+      {data.map((value) => (
+        <Question value={value} key={value.question} />
       ))}
     </div>
   );
@@ -41,11 +41,12 @@ export default function Faq() {
       answer: "The average cat sleeps 12-16 hours per day",
     },
     {
-      question: "How long do cats live",
+      question: "How long do cats live?",
       answer:
-        "Outdoor cats live 5 years on average. Indoor\ncats live 15 years on average.",
+        "Outdoor cats live 5 years on average. Indoor cats live 15 years on average.",
     },
   ];
+
   return (
     <main className="container">
       <h1 className="header">Frequently Asked Questions</h1>
