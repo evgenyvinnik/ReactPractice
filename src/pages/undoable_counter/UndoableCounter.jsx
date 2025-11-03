@@ -11,7 +11,7 @@ export default function UndoableCounter() {
   const [history, setHistory] = useState([]);
 
   const changeCounter = (delta) => {
-    let newCounter = counter + delta;
+    const newCounter = counter + delta;
 
     setHistory([
       { delta, history: `(${counter} -> ${newCounter})` },
@@ -24,8 +24,8 @@ export default function UndoableCounter() {
   };
 
   const onUndo = () => {
-    let delta = undoStack.pop();
-    let newCounter = counter + delta;
+    const delta = undoStack.pop();
+    const newCounter = counter + delta;
 
     setHistory([
       { delta, history: `undo (${counter} -> ${newCounter})` },
@@ -33,15 +33,14 @@ export default function UndoableCounter() {
     ]);
     setCounter(newCounter);
 
-
     setUndoStack([...undoStack]);
     setRedoStack([-delta, ...redoStack]);
-  }
+  };
 
   const onRedo = () => {
-    let delta = redoStack.pop();
+    const delta = redoStack.pop();
 
-    let newCounter = counter + delta;
+    const newCounter = counter + delta;
 
     setHistory([
       { delta, history: `redo (${counter} -> ${newCounter})` },
@@ -50,19 +49,23 @@ export default function UndoableCounter() {
     setCounter(newCounter);
 
     setUndoStack([-delta, ...undoStack]);
-    setRedoStack([...redoStack])
-  }
+    setRedoStack([...redoStack]);
+  };
 
   return (
     <main className="container">
       <h1 className="header">Undoable Counter</h1>
       <div className="undo-redo">
-        <button disabled={undoStack.length === 0} onClick={onUndo}>Undo</button>
-        <button disabled={redoStack.length === 0} onClick={onRedo}>Redo</button>
+        <button disabled={undoStack.length === 0} onClick={onUndo}>
+          Undo
+        </button>
+        <button disabled={redoStack.length === 0} onClick={onRedo}>
+          Redo
+        </button>
       </div>
       <div className="counters">
         <div className="stepper">
-          {STEPS.map((value, index) => {
+          {[...STEPS].reverse().map((value, index) => {
             return (
               <button
                 key={`down-${index}`}
@@ -77,7 +80,7 @@ export default function UndoableCounter() {
         </div>
         <div className="counter">{counter}</div>
         <div className="stepper">
-          {STEPS.reverse().map((value, index) => {
+          {[...STEPS].map((value, index) => {
             return (
               <button
                 key={`up-${index}`}
@@ -85,7 +88,7 @@ export default function UndoableCounter() {
                   changeCounter(value);
                 }}
               >
-                {value}
+                +{value}
               </button>
             );
           })}
