@@ -5,7 +5,7 @@ const STEPS = [1, 10, 100];
 
 export default function UndoableCounter() {
   const [counter, setCounter] = useState(0);
-
+  
   const [redoStack, setRedoStack] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
   const [history, setHistory] = useState([]);
@@ -24,7 +24,9 @@ export default function UndoableCounter() {
   };
 
   const onUndo = () => {
-    const delta = undoStack.pop();
+    if (undoStack.length === 0) return;
+
+    const [delta, ...restUndo] = undoStack;
     const newCounter = counter + delta;
 
     setHistory([
@@ -33,13 +35,14 @@ export default function UndoableCounter() {
     ]);
     setCounter(newCounter);
 
-    setUndoStack([...undoStack]);
+    setUndoStack(restUndo);
     setRedoStack([-delta, ...redoStack]);
   };
 
   const onRedo = () => {
-    const delta = redoStack.pop();
+    if (redoStack.length === 0) return;
 
+    const [delta, ...restRedo] = redoStack;
     const newCounter = counter + delta;
 
     setHistory([
@@ -49,7 +52,7 @@ export default function UndoableCounter() {
     setCounter(newCounter);
 
     setUndoStack([-delta, ...undoStack]);
-    setRedoStack([...redoStack]);
+    setRedoStack(restRedo);
   };
 
   return (
