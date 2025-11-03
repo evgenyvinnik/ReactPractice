@@ -13,10 +13,10 @@ export default function Timer() {
 
   const [total, setTotal] = useState(0);
 
-  const [id, setId] = useState(null);
+  const intervalRef = useRef(null);
 
   const calculateTotal = (hour, minute, second) =>
-    Number(hour * 3600) + Number(minute * 60) + Number(second);
+    Number(hour) * 3600 + Number(minute) * 60 + Number(second);
 
   useEffect(() => {
     setTotal(calculateTotal(hour, minute, second));
@@ -24,34 +24,47 @@ export default function Timer() {
 
   useEffect(() => {
     if (running && total === 0) {
-      clearInterval(id);
-      setId(null);
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
       setRunning(false);
       alert("Timer is done!");
     }
   }, [total, running]);
 
-  const onClickStart = () => {
-    clearInterval(id);
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
-    setId(
-      setInterval(() => {
-        setTotal((prev) => prev - 1);
-      }, SECOND)
-    );
+  const onClickStart = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = setInterval(() => {
+      setTotal((prev) => prev - 1);
+    }, SECOND);
 
     setRunning(true);
   };
 
   const onClickPause = () => {
-    clearInterval(id);
-    setId(null);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
   };
 
   const onClickReset = () => {
     setRunning(false);
-    clearInterval(id);
-    setId(null);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
     setTotal(calculateTotal(hour, minute, second));
   };
 
@@ -68,53 +81,53 @@ export default function Timer() {
   };
 
   return (
-    <main className="container">
-      <h1 className="header">Countdown timer</h1>
-      <div className="wrapper">
+    <main style={styles.container}>
+      <h1 style={styles.header}>Countdown timer</h1>
+      <div style={styles.wrapper}>
         {running ? (
-          <div className="running">{timeString(total)}</div>
+          <div style={styles.running}>{timeString(total)}</div>
         ) : (
-          <div className="inputs">
+          <div style={styles.inputs}>
             <input
-              className="timeInput"
+              style={styles.timeInput}
               type="number"
               value={hour}
-              max={60}
+              max={23}
               min={0}
               onBlur={() => {
                 if (hour < 0) setHour(0);
-                else if (hour > 60) setHour(60);
+                else if (hour > 23) setHour(23);
               }}
-              onChange={(e) => setHour(e.target.value)}
+              onChange={(e) => setHour(Number(e.target.value) || 0)}
             />
             <input
               type="number"
-              className="timeInput"
-              max={60}
+              style={styles.timeInput}
+              max={59}
               min={0}
               value={minute}
               onBlur={() => {
-                if (hour < 0) setMinute(0);
-                else if (hour > 60) setMinute(60);
+                if (minute < 0) setMinute(0);
+                else if (minute > 59) setMinute(59);
               }}
-              onChange={(e) => setMinute(e.target.value)}
+              onChange={(e) => setMinute(Number(e.target.value) || 0)}
             />
             <input
-              className="timeInput"
+              style={styles.timeInput}
               type="number"
-              max={60}
+              max={59}
               min={0}
               value={second}
               onBlur={() => {
-                if (hour < 0) setSecond(0);
-                else if (hour > 60) setSecond(60);
+                if (second < 0) setSecond(0);
+                else if (second > 59) setSecond(59);
               }}
-              onChange={(e) => setSecond(e.target.value)}
+              onChange={(e) => setSecond(Number(e.target.value) || 0)}
             />
           </div>
         )}
-        <div className="buttons">
-          {id == null ? (
+        <div style={styles.buttons}>
+          {intervalRef.current == null ? (
             <button onClick={onClickStart}>Start</button>
           ) : (
             <button onClick={onClickPause}>Pause</button>
