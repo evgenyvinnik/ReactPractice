@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -11,7 +11,10 @@ export default function Home() {
         <li>
           <Link to="/undoable_counter">Undoable Counter</Link>
         </li>
+        <li>
+          <Link to="/faq">Frequenty Asked Questions</Link>
+        </li>
       </ul>
     </main>
-  )
+  );
 }

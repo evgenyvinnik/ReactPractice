@@ -1,0 +1,40 @@
+.container {
+  max-width: 900px;
+  margin: 48px auto;
+  padding: 16px;
+  background: var(--card);
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.list {
+  min-width: 500px;
+  width: 700px;
+  max-width: 600px;
+}
+
+.entry {
+  cursor: pointer;
+  margin: 20px;
+  padding: 20px;
+  border: 2px solid #333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.question-marker {
+  font-weight: bolder;
+}
+.question-text {
+  font-weight: bold;
+}
+.question {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.answer {
+  font-weight: 500;
+}

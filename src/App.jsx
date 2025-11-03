@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import MemoryGame from "./pages/memory_game/MemoryGame";
 import UndoableCounter from "./pages/undoable_counter/UndoableCounter";
+import Faq from "./pages/faq/Faq";
 
 export default function App() {
   return (
@@ -10,6 +11,7 @@ export default function App() {
       <Route path="/" element={<Home />} />
       <Route path="/memory_game" element={<MemoryGame />} />
       <Route path="/undoable_counter" element={<UndoableCounter />} />
+      <Route path="/faq" element={<Faq />} />
     </Routes>
   );
 }
