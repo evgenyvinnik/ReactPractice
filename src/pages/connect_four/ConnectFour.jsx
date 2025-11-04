@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./styles.css";
 
 const BOARD_WIDTH = 7;
@@ -17,7 +17,7 @@ const generateBoard = (rows, cols) => {
 };
 
 const checkForWinner = (board) => {
-  const checkVerticalWinner = (board) => {
+  const checkHorizontalWinner = (board) => {
     for (let row = 0; row < BOARD_HEIGHT; row++) {
       let maxNumInRow = 1;
       let lastToken = board[row][0];
@@ -34,11 +34,10 @@ const checkForWinner = (board) => {
         lastToken = currentToken;
       }
     }
-
     return null;
   };
 
-  const checkHorizontalWinner = (board) => {
+  const checkVerticalWinner = (board) => {
     for (let col = 0; col < BOARD_WIDTH; col++) {
       let maxNumInRow = 1;
       let lastToken = board[0][col];
@@ -55,28 +54,40 @@ const checkForWinner = (board) => {
         lastToken = currentToken;
       }
     }
-
     return null;
   };
 
   const checkDiagonalWinner = (board) => {
-    for (let row = 0; row < BOARD_HEIGHT; row++) {
-      for (let col = 0; col < BOARD_WIDTH; col++) {
-        const currentToken = board[row][col];
+    // Check down-right diagonals
+    for (let row = 0; row <= BOARD_HEIGHT - NUM_IN_ROW_WIN; row++) {
+      for (let col = 0; col <= BOARD_WIDTH - NUM_IN_ROW_WIN; col++) {
+        const token = board[row][col];
+        if (token !== CELL.EMPTY) {
+          let match = true;
+          for (let i = 1; i < NUM_IN_ROW_WIN; i++) {
+            if (board[row + i][col + i] !== token) {
+              match = false;
+              break;
+            }
+          }
+          if (match) return token;
+        }
+      }
+    }
 
-        if (
-          currentToken !== CELL.EMPTY &&
-          ((row < board.length - 3 &&
-            col < board[row].length - 3 &&
-            currentToken === board[row + 1][col + 1] &&
-            currentToken === board[row + 2][col + 2] &&
-            currentToken === board[row + 3][col + 3]) ||
-            (row >= 3 &&
-              currentToken === board[row - 1][col + 1] &&
-              currentToken === board[row - 2][col + 2] &&
-              currentToken === board[row - 3][col + 3]))
-        ) {
-          return currentToken;
+    // Check up-right diagonals
+    for (let row = NUM_IN_ROW_WIN - 1; row < BOARD_HEIGHT; row++) {
+      for (let col = 0; col <= BOARD_WIDTH - NUM_IN_ROW_WIN; col++) {
+        const token = board[row][col];
+        if (token !== CELL.EMPTY) {
+          let match = true;
+          for (let i = 1; i < NUM_IN_ROW_WIN; i++) {
+            if (board[row - i][col + i] !== token) {
+              match = false;
+              break;
+            }
+          }
+          if (match) return token;
         }
       }
     }
@@ -84,18 +95,15 @@ const checkForWinner = (board) => {
     return null;
   };
 
-  let hasEmptySpace = false;
-  board.forEach(
-    (row) =>
-      (hasEmptySpace =
-        hasEmptySpace || row.findIndex((cell) => cell === CELL.EMPTY) >= 0)
-  );
+  // Check for draw first
+  const hasEmptySpace = board.some((row) => row.includes(CELL.EMPTY));
   if (!hasEmptySpace) {
     return CELL.DRAW;
   }
+
   return (
-    checkVerticalWinner(board) ||
     checkHorizontalWinner(board) ||
+    checkVerticalWinner(board) ||
     checkDiagonalWinner(board)
   );
 };
@@ -121,38 +129,38 @@ function Board({ rows, cols }) {
   const [winner, setWinner] = useState(CELL.EMPTY);
 
   const handleDrop = (col) => {
-    let row = BOARD_HEIGHT - 1;
-    for (; row >= 0; row--) {
-      if (board[row][col] === CELL.EMPTY) {
-        setBoard((prev) => {
-          const next = prev.map((row) => row.slice());
-          next[row][col] = turn;
-          return next;
-        });
+    // Find the lowest empty row
+    let row = -1;
+    for (let r = BOARD_HEIGHT - 1; r >= 0; r--) {
+      if (board[r][col] === CELL.EMPTY) {
+        row = r;
         break;
       }
     }
 
-    if (row === 0) {
-      const newDisabled = [...dropDisabled];
-      newDisabled[col] = true;
-      setDropDisabled(newDisabled);
-    }
+    if (row === -1) return; // Column is full (shouldn't happen with disabled buttons)
 
-    if (turn === CELL.RED) {
-      setTurn(CELL.YELLOW);
-    } else if (turn === CELL.YELLOW) {
-      setTurn(CELL.RED);
+    // Update board
+    const newBoard = board.map((r) => r.slice());
+    newBoard[row][col] = turn;
+    setBoard(newBoard);
+
+    // Check for winner BEFORE switching turns
+    const result = checkForWinner(newBoard);
+    if (result != null) {
+      setWinner(result);
+      setDropDisabled(Array(cols).fill(true));
+    } else {
+      // Disable column if full
+      if (row === 0) {
+        const newDisabled = [...dropDisabled];
+        newDisabled[col] = true;
+        setDropDisabled(newDisabled);
+      }
+      // Switch turns
+      setTurn(turn === CELL.RED ? CELL.YELLOW : CELL.RED);
     }
   };
-
-  useEffect(() => {
-    let potential = checkForWinner(board);
-    if (potential != null) {
-      setWinner(potential);
-      setDropDisabled(Array(cols).fill(true));
-    }
-  }, [board]);
 
   const getHeader = () => {
     if (winner === CELL.EMPTY) {
@@ -185,11 +193,11 @@ function Board({ rows, cols }) {
         className="fourField"
         style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}
       >
-        {dropDisabled.map((dropDisabled, col) => (
+        {dropDisabled.map((isDisabled, col) => (
           <button
             key={`drop-${col}`}
             className="dropButton"
-            disabled={dropDisabled}
+            disabled={isDisabled}
             onClick={() => {
               handleDrop(col);
             }}
