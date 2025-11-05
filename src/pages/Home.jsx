@@ -20,6 +20,9 @@ export default function Home() {
         <li>
           <Link to="/connect_four">Connect Four</Link>
         </li>
+        <li>
+          <Link to="/wordle">Wordle</Link>
+        </li>
       </ul>
     </main>
   );

@@ -1,0 +1,63 @@
+.container {
+  max-width: 900px;
+  margin: 48px auto;
+  padding: 16px;
+  background: var(--card);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.paragraph{
+  text-align: left;
+}
+
+.word {
+  display: flex;
+  flex-direction: row;
+}
+
+.letter{
+width: 50px;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  margin: 8px;
+  border: 2px solid #333;
+  border-radius: 8px;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  justify-content:center;
+  align-items: center;
+}
+
+.submitButton{
+  border-radius: 8px;
+}
+
+.guess{
+font-size: 24px;
+ text-transform: uppercase;
+ border: 2px solid #d1d5db;
+}
+
+
+.examples{
+  display: flex;
+  flex-direction: column;
+}
+
+.warning{
+   color: #dc2626;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bolder;
+}
+
+.letterInput{
+  text-align: center;
+  font-size: 14px;
+}

@@ -74,15 +74,15 @@ export default function Timer() {
   };
 
   return (
-    <main style={styles.container}>
-      <h1 style={styles.header}>Countdown timer</h1>
-      <div style={styles.wrapper}>
+    <main className="container">
+      <h1 className="header">Countdown timer</h1>
+      <div className="wrapper">
         {running ? (
-          <div style={styles.running}>{timeString(total)}</div>
+          <div className="running">{timeString(total)}</div>
         ) : (
-          <div style={styles.inputs}>
+          <div className="inputs">
             <input
-              style={styles.timeInput}
+              className="timeInput"
               type="number"
               value={hour}
               max={23}
@@ -95,7 +95,7 @@ export default function Timer() {
             />
             <input
               type="number"
-              style={styles.timeInput}
+              className="timeInput"
               max={59}
               min={0}
               value={minute}
@@ -106,7 +106,7 @@ export default function Timer() {
               onChange={(e) => setMinute(Number(e.target.value) || 0)}
             />
             <input
-              style={styles.timeInput}
+              className="timeInput"
               type="number"
               max={59}
               min={0}
@@ -119,7 +119,7 @@ export default function Timer() {
             />
           </div>
         )}
-        <div style={styles.buttons}>
+        <div className="buttons">
           {intervalRef.current == null ? (
             <button onClick={onClickStart}>Start</button>
           ) : (
