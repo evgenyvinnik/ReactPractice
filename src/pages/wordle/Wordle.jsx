@@ -14,7 +14,9 @@ const MAX_LETTERS = 5;
 
 const generateBoard = (rows, cols) => {
   return Array.from({ length: rows }, () =>
-    Array(cols).fill({ letter: "", guess: GUESS.NOTHING })
+    Array(cols)
+      .fill(null)
+      .map(() => ({ letter: "", guess: GUESS.NOTHING }))
   );
 };
 
@@ -49,25 +51,27 @@ const checkWordle = (solution, guess) => {
   return { result, isWinner: correctCount === MAX_LETTERS };
 };
 
-function Letter({ letter }) {
+function Letter({ letter, animate }) {
   const getColor = (guess) => {
     switch (guess) {
       case GUESS.INCORRECT:
-        return "lightgrey";
+        return "#787c7e";
       case GUESS.SEMICORRECT:
-        return "yellow";
+        return "#c9b458";
       case GUESS.CORRECT:
-        return "lightgreen";
+        return "#6aaa64";
       case GUESS.NOTHING:
-        return undefined;
+        return "transparent";
     }
   };
 
   return (
     <div
-      className="letter"
+      className={`letter ${animate ? "flip" : ""}`}
       style={{
         backgroundColor: getColor(letter.guess),
+        borderColor: letter.letter ? "#878a8c" : "#d3d6da",
+        color: letter.guess === GUESS.NOTHING ? "#000" : "#fff",
       }}
     >
       {letter.letter}
@@ -75,23 +79,23 @@ function Letter({ letter }) {
   );
 }
 
-function Word({ letters }) {
+function Word({ letters, animate }) {
   return (
     <div className="word">
       {letters.map((letter, index) => (
-        <Letter key={`letter-${index}`} letter={letter} />
+        <Letter key={`letter-${index}`} letter={letter} animate={animate} />
       ))}
     </div>
   );
 }
 
-function Entry({ onGuess, resetRequired }) {
-  const [entry, setEntry] = useState("");
+function Entry({ onGuess, resetRequired, entry, setEntry }) {
   const [warning, setWarning] = useState(null);
   const [disabled, setDisabled] = useState(false);
 
   const onSubmit = (e) => {
-    onGuess(entry.toLowerCase());
+    onGuess(entry);
+    setEntry("");
   };
 
   const onChange = (e) => {
@@ -116,26 +120,31 @@ function Entry({ onGuess, resetRequired }) {
       } else {
         setDisabled(false);
       }
+    } else {
+      setDisabled(false);
     }
     setEntry(filtered);
   };
 
   const onKeyDown = (e) => {
-    if (e.key === "Enter" && entry.length === MAX_LETTERS) {
-      onGuess(entry.toLowerCase());
+    if (e.key === "Enter" && entry.length === MAX_LETTERS && !disabled) {
+      onGuess(entry);
+      setEntry("");
     }
   };
 
   return (
     <div className="entry">
       <input
-        placeholder="▯▯▯▯▯"
+        placeholder="Enter word..."
         className="guess"
         maxLength={5}
         type="text"
+        value={entry}
         onKeyDown={onKeyDown}
         onChange={onChange}
         disabled={resetRequired}
+        autoFocus
       />
       <div className="letterInput">
         {entry.length}/5 letters{" "}
@@ -162,52 +171,68 @@ function Game() {
   const [attempt, setAttempt] = useState(0);
   const [resetRequired, setResetRequired] = useState(false);
   const [message, setMessage] = useState(null);
+  const [entry, setEntry] = useState("");
+  const [animateRow, setAnimateRow] = useState(-1);
 
   const onGuess = (word) => {
     const currentAttempt = attempt;
-    const check = checkWordle(gameWord, word);
+    const check = checkWordle(gameWord.toLowerCase(), word);
 
     const newBoard = board.map((r) => r.slice());
     newBoard[currentAttempt] = check.result;
     setBoard(newBoard);
+    setAnimateRow(currentAttempt);
+    setTimeout(() => setAnimateRow(-1), 600);
+
     setAttempt(currentAttempt + 1);
     if (check.isWinner) {
       setResetRequired(true);
-      setMessage("Congratulations! You won!");
+      setMessage("🎉 Congratulations! You won!");
     }
   };
 
   useEffect(() => {
-    if (attempt === MAX_TRIES) {
+    if (attempt === MAX_TRIES && !resetRequired) {
       setResetRequired(true);
-      setMessage("Sorry, not more tries");
+      setMessage(`😔 Sorry, no more tries. The word was: ${gameWord}`);
     }
-  }, [attempt]);
+  }, [attempt, gameWord, resetRequired]);
+
+  const resetGame = () => {
+    setResetRequired(false);
+    setBoard(generateBoard(MAX_TRIES, MAX_LETTERS));
+    setAttempt(0);
+    setMessage(null);
+    setEntry("");
+    setGameWord(GUESS_WORDS[Math.floor(Math.random() * GUESS_WORDS.length)]);
+  };
 
   return (
     <div>
-      <Entry onGuess={onGuess} resetRequired={resetRequired} />
-      {message && <div className="message">{message}</div>}
-      <button
-        className="submitButton"
-        onClick={() => {
-          setResetRequired(false);
-          setBoard(generateBoard(MAX_TRIES, MAX_LETTERS));
-          setAttempt(0);
-          setMessage(null);
-          setGameWord(
-            GUESS_WORDS[Math.floor(Math.random() * GUESS_WORDS.length)]
-          );
-        }}
-      >
-        Reset
+      <Entry
+        onGuess={onGuess}
+        resetRequired={resetRequired}
+        entry={entry}
+        setEntry={setEntry}
+      />
+      {message && (
+        <div className={`message ${resetRequired ? "show" : ""}`}>
+          {message}
+        </div>
+      )}
+      <button className="submitButton reset-button" onClick={resetGame}>
+        New Game
       </button>
       <div
         className="wordleboard"
         style={{ gridTemplateColumns: `repeat(${MAX_LETTERS}, 1fr)` }}
       >
         {board.map((word, rowIndex) => (
-          <Word key={`word-${rowIndex}`} letters={word} />
+          <Word
+            key={`word-${rowIndex}`}
+            letters={word}
+            animate={rowIndex === animateRow}
+          />
         ))}
       </div>
     </div>
@@ -243,7 +268,7 @@ export default function Wordle() {
       <h1>Wordle</h1>
       <Game />
       <h2>How to play</h2>
-      <p className="paragraph">
+      <p style={{ textAlign: "left", lineHeight: "1.6", marginBottom: "1rem" }}>
         Guess the <b>WORDLE</b> in 6 tries.
         <br />
         Each guess must be a valid 5 letter word. Hit the enter button to
@@ -258,12 +283,10 @@ export default function Wordle() {
         <p className="paragraph">
           The letter W is in the word and in the correct spot.
         </p>
-        <br />
         <Word letters={semicorrectExample} />
         <p className="paragraph">
           The letter I is in the word but in the wrong spot.
         </p>
-        <br />
         <Word letters={incorrectExample} />
         <p className="paragraph">
           The letter U is not in the word in any spot.
