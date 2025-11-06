@@ -85,11 +85,10 @@ function Word({ letters }) {
   );
 }
 
-function Entry({ onGuess, resetRequired, message }) {
+function Entry({ onGuess, resetRequired }) {
   const [entry, setEntry] = useState("");
-  const [warning, setWarning] = useState(message);
-  const [enabled, setEnabled] = useState(true);
-  const onEntryBlur = () => {};
+  const [warning, setWarning] = useState(null);
+  const [disabled, setDisabled] = useState(false);
 
   const onSubmit = (e) => {
     onGuess(entry.toLowerCase());
@@ -98,13 +97,32 @@ function Entry({ onGuess, resetRequired, message }) {
   const onChange = (e) => {
     const input = e.currentTarget.value;
 
-    setEntry(input);
+    if (/[^A-Za-z]/.test(input)) {
+      setWarning("Only English letters are allowed");
+      setTimeout(() => setWarning(""), 2000);
+    }
+
+    const filtered = input
+      .replace(/[^A-Za-z]/g, "")
+      .toLowerCase()
+      .slice(0, MAX_LETTERS);
+    if (filtered.length === MAX_LETTERS) {
+      if (
+        !(QUESS_WORDS.includes(filtered) || LEGAL_GUESSES.includes(filtered))
+      ) {
+        setWarning("This word is not allowed");
+        setTimeout(() => setWarning(""), 2000);
+        setDisabled(true);
+      } else {
+        setDisabled(false);
+      }
+    }
+    setEntry(filtered);
   };
 
   const onKeyDown = (e) => {
     if (e.key === "Enter" && entry.length === MAX_LETTERS) {
       onGuess(entry.toLowerCase());
-      console.log("Submitted:", entry);
     }
   };
 
@@ -116,7 +134,6 @@ function Entry({ onGuess, resetRequired, message }) {
         maxLength={5}
         type="text"
         onKeyDown={onKeyDown}
-        onBlur={onEntryBlur}
         onChange={onChange}
         disabled={resetRequired}
       />
@@ -126,7 +143,7 @@ function Entry({ onGuess, resetRequired, message }) {
       </div>
       <button
         className="submitButton"
-        disabled={!enabled || resetRequired}
+        disabled={entry.length !== MAX_LETTERS || resetRequired || disabled}
         onClick={onSubmit}
       >
         Submit
@@ -156,21 +173,37 @@ function Game() {
     newBoard[currentAttempt] = check.result;
     setBoard(newBoard);
     setAttempt(currentAttempt + 1);
+    if (check.isWinner) {
+      setResetRequired(true);
+      setMessage("Congratulations! You won!");
+    }
   };
 
   useEffect(() => {
     if (attempt === MAX_TRIES) {
       setResetRequired(true);
+      setMessage("Sorry, not more tries");
     }
   }, [attempt]);
 
   return (
     <div>
-      <Entry
-        onGuess={onGuess}
-        resetRequired={resetRequired}
-        message={message}
-      />
+      <Entry onGuess={onGuess} resetRequired={resetRequired} />
+      {message && <div className="message">{message}</div>}
+      <button
+        className="submitButton"
+        onClick={() => {
+          setResetRequired(false);
+          setBoard(generateBoard(MAX_TRIES, MAX_LETTERS));
+          setAttempt(0);
+          setMessage(null);
+          setGameWord(
+            QUESS_WORDS[Math.floor(Math.random() * QUESS_WORDS.length)]
+          );
+        }}
+      >
+        Reset
+      </button>
       <div
         className="wordleboard"
         style={{ gridTemplateColumns: `repeat(${MAX_LETTERS}, 1fr)` }}

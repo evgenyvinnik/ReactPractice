@@ -10,7 +10,7 @@
   text-align: center;
 }
 
-.paragraph{
+.paragraph {
   text-align: left;
 }
 
@@ -19,8 +19,8 @@
   flex-direction: row;
 }
 
-.letter{
-width: 50px;
+.letter {
+  width: 50px;
   height: 50px;
   display: flex;
   flex-direction: row;
@@ -30,34 +30,40 @@ width: 50px;
   font-size: 24px;
   font-weight: bold;
   text-align: center;
-  justify-content:center;
+  justify-content: center;
   align-items: center;
 }
 
-.submitButton{
+.submitButton {
   border-radius: 8px;
 }
 
-.guess{
-font-size: 24px;
- text-transform: uppercase;
- border: 2px solid #d1d5db;
+.guess {
+  font-size: 24px;
+  text-transform: uppercase;
+  border: 2px solid #d1d5db;
 }
 
-
-.examples{
+.examples {
   display: flex;
   flex-direction: column;
 }
 
-.warning{
-   color: #dc2626;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bolder;
+.warning {
+  color: #dc2626;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bolder;
 }
 
-.letterInput{
+.message {
+  color: green;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bolder;
+}
+
+.letterInput {
   text-align: center;
   font-size: 14px;
 }
