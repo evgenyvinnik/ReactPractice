@@ -32,10 +32,28 @@
   text-align: center;
   justify-content: center;
   align-items: center;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.entry {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .submitButton {
   border-radius: 8px;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .guess {

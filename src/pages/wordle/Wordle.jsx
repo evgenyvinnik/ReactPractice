@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
-import { QUESS_WORDS, LEGAL_GUESSES } from "./words";
+import { GUESS_WORDS, LEGAL_GUESSES } from "./words";
 
 const GUESS = {
   INCORRECT: "incorrect",
@@ -108,7 +108,7 @@ function Entry({ onGuess, resetRequired }) {
       .slice(0, MAX_LETTERS);
     if (filtered.length === MAX_LETTERS) {
       if (
-        !(QUESS_WORDS.includes(filtered) || LEGAL_GUESSES.includes(filtered))
+        !(GUESS_WORDS.includes(filtered) || LEGAL_GUESSES.includes(filtered))
       ) {
         setWarning("This word is not allowed");
         setTimeout(() => setWarning(""), 2000);
@@ -155,9 +155,8 @@ function Entry({ onGuess, resetRequired }) {
 
 function Game() {
   const [gameWord, setGameWord] = useState(
-    QUESS_WORDS[Math.floor(Math.random() * QUESS_WORDS.length)]
+    GUESS_WORDS[Math.floor(Math.random() * GUESS_WORDS.length)]
   );
-  console.log("gameWord", gameWord);
 
   const [board, setBoard] = useState(generateBoard(MAX_TRIES, MAX_LETTERS));
   const [attempt, setAttempt] = useState(0);
@@ -165,7 +164,6 @@ function Game() {
   const [message, setMessage] = useState(null);
 
   const onGuess = (word) => {
-    console.log("word", word);
     const currentAttempt = attempt;
     const check = checkWordle(gameWord, word);
 
@@ -198,7 +196,7 @@ function Game() {
           setAttempt(0);
           setMessage(null);
           setGameWord(
-            QUESS_WORDS[Math.floor(Math.random() * QUESS_WORDS.length)]
+            GUESS_WORDS[Math.floor(Math.random() * GUESS_WORDS.length)]
           );
         }}
       >

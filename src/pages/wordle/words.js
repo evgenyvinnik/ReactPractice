@@ -1,4 +1,4 @@
-export const QUESS_WORDS = [
+export const GUESS_WORDS = [
   "cigar",
   "rebut",
   "sissy",
