@@ -23,6 +23,9 @@ export default function Home() {
         <li>
           <Link to="/wordle">Wordle</Link>
         </li>
+        <li>
+          <Link to="/test">Test</Link>
+        </li>
       </ul>
     </main>
   );

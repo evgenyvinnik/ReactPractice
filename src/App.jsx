@@ -7,6 +7,7 @@ import Faq from "./pages/faq/Faq";
 import Timer from "./pages/timer/Timer";
 import ConnectFour from "./pages/connect_four/ConnectFour";
 import Wordle from "./pages/wordle/Wordle";
+import Test from "./pages/test/Test";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/timer" element={<Timer />} />
       <Route path="/connect_four" element={<ConnectFour />} />
       <Route path="/wordle" element={<Wordle />} />
+      <Route path="/test" element={<Test />} />
     </Routes>
   );
 }
