@@ -24,7 +24,7 @@ export default function Home() {
           <Link to="/wordle">Wordle</Link>
         </li>
         <li>
-          <Link to="/test">Test</Link>
+          <Link to="/phone_input">Phone Input</Link>
         </li>
       </ul>
     </main>

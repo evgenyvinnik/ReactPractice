@@ -8,3 +8,8 @@
   flex-direction: column;
   align-items: center;
 }
+
+
+.phoneInput {
+  font-size: large;
+}
