@@ -5,48 +5,69 @@ function Input() {
   const [telephone, setTelephone] = useState("");
   const inputRef = useRef(null);
 
+  const countDigitsBefore = (str, pos) => {
+    return str.slice(0, pos).replace(/\D/g, "").length;
+  };
+  
+  const findPositionAfterDigits = (formatted, digitCount) => {
+    let count = 0;
+    for (let i = 0; i < formatted.length; i++) {
+      if (/\d/.test(formatted[i])) {
+        count++;
+        if (count >= digitCount) {
+          return i + 1;
+        }
+      }
+    }
+    return formatted.length;
+  };
+
   const onPhoneChange = (e) => {
-    // console.log(e.currentTarget.value);
     const input = e.target;
-    let start = input.selectionStart;
-    console.log('start', start);
+    const cursorPos = input.selectionStart;
+    const oldValue = telephone;
+    const newValue = input.value;
 
-    let value = input.value;
-    let digits = [];
-    for (let i = 0; i < value.length; i++) {
-      if (
-        value.charCodeAt(i) >= "0".charCodeAt(0) &&
-        value.charCodeAt(i) <= "9".charCodeAt(0)
-      ) {
-        digits.push(value.charAt(i));
+    // Extract only digits
+    const digits = newValue.replace(/\D/g, "").slice(0, 10);
+    
+    // Format the phone number
+    let formatted = "";
+    if (digits.length > 0) {
+      formatted = "(" + digits.substring(0, 3);
+      if (digits.length > 3) {
+        formatted += ") " + digits.substring(3, 6);
+      }
+      if (digits.length > 6) {
+        formatted += "-" + digits.substring(6, 10);
       }
     }
 
-    let digitString = digits.slice(0, 10);
-    const length = digitString.length;
+    // Calculate new cursor position
+    // Key insight: preserve the number of digits before the cursor
+    const digitsBeforeCursor = countDigitsBefore(newValue, cursorPos);
+    const newCursorPos = findPositionAfterDigits(formatted, digitsBeforeCursor);
 
-    if (length > 6) {
-      digitString.splice(6, 0, "-");
-      if(start > 6) {
-        start++;
-      }
-    }
-    if (length > 3) {
-      digitString.splice(3, 0, ")", " ");
-      start+=2
-    }
-    if (length > 0) {
-      digitString.splice(0, 0, "(");
-      start++;
-    }
-
-    setTelephone(digitString.join(""));
+    setTelephone(formatted);
 
     requestAnimationFrame(() => {
       if (inputRef.current) {
-        inputRef.current.setSelectionRange(start, start);
+        inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
       }
     });
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === "Backspace") {
+      const cursorPos = e.target.selectionStart;
+      const char = telephone[cursorPos - 1];
+      
+      if (char && /[^\d]/.test(char)) {
+        e.preventDefault();
+        const newPos = cursorPos - 1;
+        inputRef.current.setSelectionRange(newPos, newPos);
+      }
+    }
   };
 
   return (
@@ -59,6 +80,7 @@ function Input() {
         value={telephone}
         className="phoneInput"
         onChange={onPhoneChange}
+        onKeyDown={onKeyDown}
       />
     </div>
   );
