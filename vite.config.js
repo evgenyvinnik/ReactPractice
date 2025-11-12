@@ -7,5 +7,11 @@ const basePath = process.env.VITE_BASE || '/ReactPractice/'
 
 export default defineConfig({
   base: basePath,
-  plugins: [react()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler']],
+      },
+    }),
+  ],
 })
