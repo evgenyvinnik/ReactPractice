@@ -29,6 +29,9 @@ export default function Home() {
         <li>
           <Link to="/tooltip">Tooltip</Link>
         </li>
+        <li>
+          <Link to="/table_select">Table Select</Link>
+        </li>
       </ul>
     </main>
   );

@@ -9,6 +9,7 @@ import ConnectFour from "./pages/connect_four/ConnectFour";
 import Wordle from "./pages/wordle/Wordle";
 import Test from "./pages/phone_input/PhoneInput";
 import Tooltip from "./pages/tooltip/Tooltip";
+import TableSelect from "./pages/table_select/TableSelect";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
       <Route path="/wordle" element={<Wordle />} />
       <Route path="/phone_input" element={<Test />} />
       <Route path="/tooltip" element={<Tooltip />} />
+      <Route path="/table_select" element={<TableSelect />} />
     </Routes>
   );
 }
