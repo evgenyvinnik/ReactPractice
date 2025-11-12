@@ -26,6 +26,9 @@ export default function Home() {
         <li>
           <Link to="/phone_input">Phone Input</Link>
         </li>
+        <li>
+          <Link to="/tooltip">Tooltip</Link>
+        </li>
       </ul>
     </main>
   );

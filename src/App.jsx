@@ -8,6 +8,7 @@ import Timer from "./pages/timer/Timer";
 import ConnectFour from "./pages/connect_four/ConnectFour";
 import Wordle from "./pages/wordle/Wordle";
 import Test from "./pages/phone_input/PhoneInput";
+import Tooltip from "./pages/tooltip/Tooltip";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/connect_four" element={<ConnectFour />} />
       <Route path="/wordle" element={<Wordle />} />
       <Route path="/phone_input" element={<Test />} />
+      <Route path="/tooltip" element={<Tooltip />} />
     </Routes>
   );
 }
